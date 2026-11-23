@@ -74,10 +74,9 @@ internal static class Program
         bool running = false;
         try
         {
-            using (Process[] ps = Process.GetProcessesByName("Trafficity"))
-            {
-                running = ps.Length > 0;
-            }
+            Process[] ps = Process.GetProcessesByName("Trafficity");
+            running = ps.Length > 0;
+            for (int i = 0; i < ps.Length; i++) ps[i].Dispose();
         }
         catch (Exception ex)
         {
