@@ -31,13 +31,29 @@ jobs:
       - name: Validate patcher anchors
         shell: pwsh
         run: |
-          $ps = Get-Content src/patch.ps1 -Raw -Encoding UTF8
-          foreach ($a in @('zhs:{', 'schinese:"zhs"', 'zhs:"zh-CN"')) {
-            if (-not $ps.Contains($a)) { throw "anchor missing in patch.ps1: $a" }
+          # patch.ps1 must keep its UTF-8 BOM or PowerShell 5.1 misparses the Chinese literals
+          $raw = [System.IO.File]::ReadAllBytes("src/patch.ps1")
+          if ($raw.Length -lt 3 -or $raw[0] -ne 0xEF -or $raw[1] -ne 0xBB -or $raw[2] -ne 0xBF) {
+            throw "src/patch.ps1 is missing the UTF-8 BOM"
           }
+
+          # every anchor token the patcher searches for must still exist in its source
+          $ps = Get-Content src/patch.ps1 -Raw -Encoding UTF8
+          $tokens = @("zhs:{", "schinese:", "zh-CN", "tchinese", "traditionalchinese", "繁體中文", "LOCALISATION")
+          foreach ($t in $tokens) {
+            if (-not $ps.Contains($t)) { throw ("anchor token missing in patch.ps1: " + $t) }
+          }
+
+          # the C# launcher must embed all three payload files
           $cs = Get-Content src/installer/Installer.cs -Raw -Encoding UTF8
-          foreach ($r in @('patch.ps1', 'restore.ps1', 'zht.json')) {
-            if (-not $cs.Contains($r)) { throw "installer does not reference $r" }
+          foreach ($r in @("patch.ps1", "restore.ps1", "zht.json")) {
+            if (-not $cs.Contains($r)) { throw ("installer does not reference " + $r) }
+          }
+
+          # the build script must wire those same resource names into csc
+          $build = Get-Content src/installer/build.ps1 -Raw -Encoding UTF8
+          foreach ($r in @("patch.ps1,patch.ps1", "restore.ps1,restore.ps1", "zht.json,zht.json")) {
+            if (-not $build.Contains($r)) { throw ("build.ps1 missing /resource entry: " + $r) }
           }
           Write-Host "anchors present"
 
