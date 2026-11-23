@@ -36,15 +36,15 @@
 
 找不到遊戲目錄時，把補丁資料夾整個複製到遊戲根目錄再執行，例如：
 
-`@
+```
 D:\SteamLibrary\steamapps\common\Trafficity\Trafficity-CHT\
-`@
+```
 
 解壓後若中文檔名變亂碼（舊版 Windows），可直接執行資料夾內的腳本：
 
-`@powershell
+```powershell
 powershell -NoProfile -ExecutionPolicy Bypass -File patch.ps1
-`@
+```
 
 ### 方法二：手動替換
 
@@ -95,33 +95,33 @@ Trafficity 是 Electron 應用，程式碼全部打包在 `resources\app.asar`�
 
 腳本在寫入前會檢查所有錨點是否存在，任一缺失就中止且不修改檔案：
 
-`@
+```
 zhs:{                              → 簡中語系物件
 schinese:"zhs"                     → Steam 語言對照
 zhs:"zh-CN"                        → 語系代碼
 if("zh"===t)return c(n)...         → 語言偵測邏輯
 dist/transit-city-game.<hash>.js   → 主程式（檔名含雜湊，動態比對）
-`@
+```
 
 ## 開發
 
 repo 內的 `tools/` 是給開發者用的 Node 工具（不安裝也能玩）：
 
-`@bash
+```bash
 # 檢視 asar 結構
 node tools/inspect-asar.mjs /path/to/app.asar list
 
 # 由原始 app.asar + src/zht.json 重新產生漢化版封裝
 node tools/build-asar.mjs /path/to/app.asar.orig ./app.asar.new
-`@
+```
 
 `tools/build-asar.mjs` 與 `src/patch.ps1` 產生的檔案**位元組完全相同**（SHA-256 `ca036a04...`），可互相驗證。
 
 ### 重新打包 release
 
-`@powershell
+```powershell
 Compress-Archive -Path src\* -DestinationPath Trafficity-CHT-v1.0.zip -Force
-`@
+```
 
 或直接執行 `.\build-release.ps1 -Tag v1.0`。
 
