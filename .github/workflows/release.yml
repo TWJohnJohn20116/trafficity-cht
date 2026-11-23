@@ -39,7 +39,7 @@ jobs:
 
           # every anchor token the patcher searches for must still exist in its source
           $ps = Get-Content src/patch.ps1 -Raw -Encoding UTF8
-          $tokens = @("zhs:{", "schinese:", "zh-CN", "tchinese", "traditionalchinese", "繁體中文", "LOCALISATION")
+          $tokens = @("zhs:{", "schinese:", "zh-CN", "tchinese", "traditionalchinese", "繁體中文", "zht")
           foreach ($t in $tokens) {
             if (-not $ps.Contains($t)) { throw ("anchor token missing in patch.ps1: " + $t) }
           }
