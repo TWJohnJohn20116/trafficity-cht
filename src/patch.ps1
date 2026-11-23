@@ -1,4 +1,4 @@
-param([string]$GameDir = "")
+﻿param([string]$GameDir = "")
 
 $ErrorActionPreference = "Stop"
 $Marker = "[Trafficity CHT]"
