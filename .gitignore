@@ -16,6 +16,12 @@ desktop.ini
 .vscode/
 .idea/
 
+# build output
+dist/
+*.exe
+.cht-work-*/
+ci*/
+
 # local scratch
 scratch/
 *.log
