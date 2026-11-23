@@ -8,7 +8,7 @@
 | --- | --- |
 | 譯文字串 | 442 條（選單／教學／工具列／建築／行程分析／成就說明／製作人員） |
 | 遊戲版本 | 1.0（build 6969441617 實機驗證通過） |
-| 補丁大小 | 約 14 KB（不含遊戲本體） |
+| 補丁大小 | 可攜包約 14 KB；單檔安裝器約 40 KB（皆不含遊戲本體） |
 | 依賴 | 無。PowerShell 5.1 內建即可執行 |
 | 影響範圍 | 僅介面文字。存檔、成就、多人、Steam 雲端皆不受影響 |
 
@@ -24,7 +24,23 @@
 
 ## 安裝
 
-### 方法一：一鍵腳本（建議）
+### 方法一：一鍵安裝 exe（最推薦）
+
+1. 完全關閉遊戲（含 Steam 工作列圖示）。
+2. 下載 Release 的 `Trafficity-CHT-Setup.exe`。
+3. 雙擊執行。會跳 SmartScreen 警告：**更多資訊 → 仍要執行**。
+4. 程式會自動：尋找遊戲目錄 → 備份 `app.asar.orig` → 注入繁中語系 → 重建封裝 → 把語言設為繁中。
+5. 啟動遊戲。若語言不是繁中，到 **設定 → 語言 → 繁體中文**。
+
+單檔執行，不需要解壓、不需要安裝任何東西（腳本與譯文都內嵌在 exe 裡）。
+
+找不到遊戲或想指定路徑時：
+
+```
+Trafficity-CHT-Setup.exe "D:\SteamLibrary\steamapps\common\Trafficity"
+```
+
+### 方法二：可攜腳本包（zip）
 
 1. 完全關閉遊戲（含 Steam 工作列圖示）。
 2. 下載並解壓 `Trafficity-CHT-vX.Y.zip`。
@@ -46,7 +62,7 @@ D:\SteamLibrary\steamapps\common\Trafficity\Trafficity-CHT\
 powershell -NoProfile -ExecutionPolicy Bypass -File patch.ps1
 ```
 
-### 方法二：手動替換
+### 方法三：手動替換
 
 1. 備份 `resources\app.asar`。
 2. 下載 release 附帶的完整 `app.asar`。
@@ -55,7 +71,8 @@ powershell -NoProfile -ExecutionPolicy Bypass -File patch.ps1
 
 ## 還原
 
-- 執行 **`還原原版.bat`**，會把 `resources\app.asar.orig` 還原回 `app.asar`。
+- 執行 **`Trafficity-CHT-Setup.exe --restore`**，或可攜包內的 **`還原原版.bat`**。
+- 兩者都會把 `resources\app.asar.orig` 還原回 `app.asar`。
 - 或在 Steam 對遊戲按 **內容 → 已安裝檔案 → 驗證檔案完整性**。
 
 ## 常見問題
