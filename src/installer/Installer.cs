@@ -18,8 +18,7 @@ internal static class Program
         try { Console.Title = AppTitle; } catch { }
 
         string exeDir = AppDomain.CurrentDomain.BaseDirectory;
-        _logPath = Path.Combine(Path.GetTempPath(), "TrafficityCHT-setup.log");
-        try { File.WriteAllText(_logPath, "== " + DateTime.Now.ToString("s") + " ==\r\n"); } catch { }
+        InitLog(exeDir);
 
         try
         {
@@ -27,11 +26,16 @@ internal static class Program
         }
         catch (Exception ex)
         {
-            Log("[錯誤] " + ex.GetType().Name + ": " + ex.Message);
+            Log("[錯誤] " + ex.GetType().FullName + ": " + ex.Message);
             Log(ex.StackTrace);
-            Console.WriteLine();
-            Console.WriteLine("[錯誤] 安裝失敗，詳細記錄：" + _logPath);
-            Console.WriteLine("       請把這個檔案回報到 GitHub issue。");
+            if (ex.InnerException != null) Log("inner: " + ex.InnerException.Message);
+            SafeWrite("");
+            SafeWrite("[錯誤] 安裝失敗：" + ex.GetType().Name);
+            SafeWrite("  " + ex.Message);
+            if (ex.InnerException != null) SafeWrite("  inner: " + ex.InnerException.Message);
+            SafeWrite("");
+            SafeWrite("詳細記錄：" + (_logPath == null ? "(無法寫入記錄檔)" : _logPath));
+            SafeWrite("請把上面訊息回報到 GitHub issue。");
             Pause();
             return 1;
         }
@@ -133,6 +137,29 @@ internal static class Program
         Console.WriteLine("  Steam AppID 5185750");
         Console.WriteLine("==============================================");
         Console.WriteLine();
+    }
+
+    private static void InitLog(string exeDir)
+    {
+        var candidates = new List<string>();
+        try { candidates.Add(Path.Combine(exeDir, "TrafficityCHT-setup.log")); } catch { }
+        try { candidates.Add(Path.Combine(Path.GetTempPath(), "TrafficityCHT-setup.log")); } catch { }
+        try { candidates.Add(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "TrafficityCHT-setup.log")); } catch { }
+        foreach (string c in candidates)
+        {
+            try
+            {
+                File.WriteAllText(c, "== " + DateTime.Now.ToString("s") + " ==\r\n", Encoding.UTF8);
+                _logPath = c;
+                return;
+            }
+            catch { }
+        }
+    }
+
+    private static void SafeWrite(string message)
+    {
+        try { Console.WriteLine(message); } catch { }
     }
 
     private static void Log(string message)
