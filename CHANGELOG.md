@@ -1,6 +1,6 @@
 # Changelog
 
-## v1.1 — 2026-11-23
+## v1.0.1 — 2026-11-23
 
 - 新增單檔 `Trafficity-CHT-Setup.exe`：內嵌腳本與譯文，雙擊即安裝，支援 `--restore`
 - 安裝器會自動尋找 Steam 遊戲目錄（registry + libraryfolders.vdf + 常見路徑）
