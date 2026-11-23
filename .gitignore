@@ -1,0 +1,21 @@
+# release artifacts
+*.zip
+*.asar
+*.asar.orig
+*.asar.new
+
+# node
+node_modules/
+package-lock.json
+package.json
+
+# os / editor
+.DS_Store
+Thumbs.db
+desktop.ini
+.vscode/
+.idea/
+
+# local scratch
+scratch/
+*.log
