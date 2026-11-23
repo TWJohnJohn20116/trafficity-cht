@@ -93,9 +93,15 @@ internal static class Program
             return 1;
         }
 
-        string tempDir = Path.Combine(Path.GetTempPath(), "TrafficityCHT_" + Guid.NewGuid().ToString("N").Substring(0, 8));
-        Directory.CreateDirectory(tempDir);
-        Log("temp=" + tempDir);
+        string tempDir = CreateWorkDir(exeDir);
+        if (tempDir == null)
+        {
+            SafeWrite("[錯誤] 無法建立暫存資料夾（TEMP 與程式目錄皆不可寫）。");
+            SafeWrite("       請把本程式移到有寫入權限的資料夾後再執行。");
+            Pause();
+            return 1;
+        }
+        Log("workdir=" + tempDir);
 
         try
         {
@@ -128,6 +134,30 @@ internal static class Program
         {
             try { Directory.Delete(tempDir, true); } catch { }
         }
+    }
+
+    private static string CreateWorkDir(string exeDir)
+    {
+        string tag = Guid.NewGuid().ToString("N").Substring(0, 8);
+        var candidates = new List<string>();
+        try { candidates.Add(Path.Combine(exeDir, ".cht-work-" + tag)); } catch { }
+        try { candidates.Add(Path.Combine(Path.GetTempPath(), "TrafficityCHT_" + tag)); } catch { }
+        try { candidates.Add(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "TrafficityCHT", tag)); } catch { }
+        try { candidates.Add(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "TrafficityCHT", tag)); } catch { }
+
+        foreach (string c in candidates)
+        {
+            try
+            {
+                Directory.CreateDirectory(c);
+                return c;
+            }
+            catch (Exception ex)
+            {
+                Log("workdir rejected: " + c + " (" + ex.GetType().Name + ")");
+            }
+        }
+        return null;
     }
 
     private static void Banner()
