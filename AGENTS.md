@@ -77,8 +77,6 @@ sha256sum /tmp/out.asar
 2026-11 更新只動了 `Router.*.js`、worker bundle 與執行檔，i18n 主程式
 `dist/transit-city-game.225ce3d0.js` 的雜湊完全沒變，因此譯文與錨點全部沿用。
 
-
-
 如果你刻意改了 `zht.json`，雜湊當然會不同；但若封裝大小或偏移佈局有非預期的變化，
 代表 asar 寫入邏輯回歸了。
 

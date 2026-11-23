@@ -1,4 +1,4 @@
-﻿param([string]$GameDir = "")
+param([string]$GameDir = "")
 
 $ErrorActionPreference = "Stop"
 $Marker = "[Trafficity CHT]"
@@ -199,7 +199,13 @@ $headerSize2 = 4 + $payloadLen
 $tmp = $asar + ".new"
 Say "重建封裝（約 700 MB，請稍候）..."
 $srcFs = [System.IO.File]::Open($asar, [System.IO.FileMode]::Open, [System.IO.FileAccess]::Read, [System.IO.FileShare]::ReadWrite)
-$outFs = [System.IO.File]::Open($tmp, [System.IO.FileMode]::Create, [System.IO.FileAccess]::Write, [System.IO.FileShare]::None)
+$outFs = $null
+try {
+    $outFs = [System.IO.File]::Open($tmp, [System.IO.FileMode]::Create, [System.IO.FileAccess]::Write, [System.IO.FileShare]::None)
+} catch {
+    $srcFs.Close()
+    Fail "無法在遊戲資料夾建立暫存檔。常見原因：Steam 正在下載或更新這款遊戲、遊戲仍在執行，或資料夾被防毒鎖住。請確認後再執行一次。"
+}
 try {
     $headBytes = New-Object byte[] 16
     [BitConverter]::GetBytes([uint32]4).CopyTo($headBytes, 0)
@@ -228,7 +234,7 @@ try {
         }
     }
 } finally {
-    $outFs.Close()
+    if ($outFs) { $outFs.Close() }
     $srcFs.Close()
 }
 
